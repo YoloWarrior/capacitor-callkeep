@@ -16,7 +16,7 @@ public class VoiceConnectionService extends ConnectionService {
     VoiceConnection connection = new VoiceConnection();
     Bundle extras = request.getExtras();
     connection.setExtras(extras);
-    connection.setRinging();
+    connection.setActive();
     return connection;
   }
 
