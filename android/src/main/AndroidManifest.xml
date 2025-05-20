@@ -9,7 +9,8 @@
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
   <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
   <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS"/>
-
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+  <uses-permission android:name="android.permission.MANAGE_OWN_CALLS" />
   <application>
 
     <!-- 📞 Служба нативных звонков -->

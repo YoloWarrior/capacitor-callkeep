@@ -35,20 +35,35 @@ public class CallKeepPlugin extends Plugin {
     TelecomManager telecomManager = (TelecomManager) context.getSystemService(Context.TELECOM_SERVICE);
     ComponentName componentName = new ComponentName(context, VoiceConnectionService.class);
     PhoneAccountHandle accountHandle = new PhoneAccountHandle(componentName, "CallKeep");
+
     PhoneAccount account = PhoneAccount.builder(accountHandle, "CallKeep")
             .setCapabilities(PhoneAccount.CAPABILITY_CALL_PROVIDER)
+            .addSupportedUriScheme(PhoneAccount.SCHEME_TEL)
             .build();
 
     telecomManager.registerPhoneAccount(account);
 
+    // 🔍 Проверяем, активировал ли пользователь аккаунт
+    List<PhoneAccountHandle> enabledAccounts = telecomManager.getCallCapablePhoneAccounts();
+    boolean isEnabled = false;
+    for (PhoneAccountHandle handleCheck : enabledAccounts) {
+      if (handleCheck.equals(accountHandle)) {
+        isEnabled = true;
+        break;
+      }
+    }
+
+    if (!isEnabled) {
+      Intent intent = new Intent(TelecomManager.ACTION_CHANGE_PHONE_ACCOUNTS);
+      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+      context.startActivity(intent);
+      call.reject("Phone account is not enabled yet. Opened settings.");
+      return;
+    }
+
+    // ✅ Только если активен
     Bundle extras = new Bundle();
     extras.putString("CALL_ID", uuid);
-
-    ConnectionRequest request = new ConnectionRequest(
-            accountHandle,
-            Uri.fromParts("tel", handle, null),
-            extras
-    );
 
     telecomManager.addNewIncomingCall(accountHandle, extras);
     call.resolve();
