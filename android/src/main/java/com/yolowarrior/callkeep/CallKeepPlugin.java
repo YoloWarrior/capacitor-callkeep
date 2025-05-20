@@ -36,7 +36,7 @@ public class CallKeepPlugin extends Plugin {
     ComponentName componentName = new ComponentName(context, VoiceConnectionService.class);
     PhoneAccountHandle accountHandle = new PhoneAccountHandle(componentName, "CallKeep");
     PhoneAccount account = PhoneAccount.builder(accountHandle, "CallKeep")
-            .setCapabilities(PhoneAccount.CAPABILITY_SELF_MANAGED)
+            .setCapabilities(PhoneAccount.CAPABILITY_CALL_PROVIDER)
             .build();
 
     telecomManager.registerPhoneAccount(account);
