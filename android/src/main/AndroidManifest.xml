@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.yolowarrior.callkeep">
+    package="com.yolowarrior.callkeep">
 
   <!-- 🛡️ Разрешения -->
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -11,13 +11,20 @@
   <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS"/>
   <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
   <uses-permission android:name="android.permission.MANAGE_OWN_CALLS" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_PHONE_CALL" />
+
   <application>
+
+    <service
+        android:name=".CallForegroundService"
+        android:exported="false"
+        android:foregroundServiceType="phoneCall" />
 
     <!-- 📞 Служба нативных звонков -->
     <service
-            android:name="com.yolowarrior.callkeep.VoiceConnectionService"
-            android:exported="true"
-            android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE">
+        android:name=".VoiceConnectionService"
+        android:exported="true"
+        android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE">
       <intent-filter>
         <action android:name="android.telecom.ConnectionService" />
       </intent-filter>

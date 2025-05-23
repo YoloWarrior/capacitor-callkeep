@@ -1,13 +1,22 @@
 package com.yolowarrior.callkeep;
-
+import android.Manifest;
+import android.content.pm.PackageManager;
+import androidx.core.app.ActivityCompat;
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.telecom.TelecomManager;
 import android.telecom.PhoneAccount;
 import android.telecom.PhoneAccountHandle;
 import android.telecom.ConnectionRequest;
 import android.net.Uri;
+import java.util.List;
+
+import androidx.core.app.ActivityCompat;
 
 import com.getcapacitor.*;
 import com.getcapacitor.annotation.CapacitorPlugin;
@@ -43,7 +52,17 @@ public class CallKeepPlugin extends Plugin {
 
     telecomManager.registerPhoneAccount(account);
 
-    // 🔍 Проверяем, активировал ли пользователь аккаунт
+
+    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+      // TODO: Consider calling
+      //    ActivityCompat#requestPermissions
+      // here to request the missing permissions, and then overriding
+      //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+      //                                          int[] grantResults)
+      // to handle the case where the user grants the permission. See the documentation
+      // for ActivityCompat#requestPermissions for more details.
+      return;
+    }
     List<PhoneAccountHandle> enabledAccounts = telecomManager.getCallCapablePhoneAccounts();
     boolean isEnabled = false;
     for (PhoneAccountHandle handleCheck : enabledAccounts) {
@@ -64,6 +83,13 @@ public class CallKeepPlugin extends Plugin {
     // ✅ Только если активен
     Bundle extras = new Bundle();
     extras.putString("CALL_ID", uuid);
+
+    Intent serviceIntent = new Intent(context, CallForegroundService.class);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      context.startForegroundService(serviceIntent);
+    } else {
+      context.startService(serviceIntent);
+    }
 
     telecomManager.addNewIncomingCall(accountHandle, extras);
     call.resolve();
